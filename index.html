@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Альбом для Елизаветы</title>
+  <style>
+    :root {
+      --bg: #fdf6f0;
+      --text: #333;
+      --accent: #e8b4b8;
+      --panel: #fff;
+      --shadow: rgba(0,0,0,0.05);
+      --border: #f0e0d8;
+    }
+
+    [data-theme="dark"] {
+      --bg: #1a101a;
+      --text: #f5f0e6;
+      --accent: #c3b1e1;
+      --panel: #2a202a;
+      --shadow: rgba(0,0,0,0.3);
+      --border: #3a303a;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Lato', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* Шапка */
+    .header {
+      text-align: center;
+      padding: 40px 0;
+    }
+
+    .cover {
+      width: 100%;
+      max-width: 320px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px var(--shadow);
+      margin: 0 auto 20px;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.4rem;
+      margin-bottom: 12px;
+      color: var(--accent);
+    }
+
+    .dedication {
+      font-size: 1.1rem;
+      margin-bottom: 24px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .start-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      font-size: 1rem;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: 600;
+      margin-bottom: 40px;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+
+    .start-btn:hover {
+      transform: translateY(-2px);
+      opacity: 0.95;
+    }
+
+    /* Вкладки */
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 30px 0;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      background: transparent;
+      border: 2px solid var(--accent);
+      color: var(--accent);
+      padding: 10px 24px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .tab.active {
+      background: var(--accent);
+      color: white;
+    }
+
+    .tab:hover:not(.active) {
+      background: var(--accent);
+      color: white;
+    }
+
+    /* Секции */
+    .section {
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Таблица треков */
+    .tracks-table-container {
+      margin: 30px 0;
+      background: var(--panel);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px var(--shadow);
+      overflow: hidden;
+    }
+
+    .tracks-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 1rem;
+    }
+
+    .tracks-table th,
+    .tracks-table td {
+      padding: 16px 20px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tracks-table th {
+      background: var(--bg);
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      letter-spacing: 0.5px;
+    }
+
+    .tracks-table tbody tr {
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .tracks-table tbody tr:hover {
+      background: rgba(0,0,0,0.02);
+    }
+
+    .tracks-table tbody tr.active {
+      background: rgba(232, 180, 184, 0.1);
+    }
+
+    .tracks-table td:last-child {
+      text-align: right;
+      width: 60px;
+    }
+
+    .lyrics-toggle-btn {
+      background: transparent;
+      border: none;
+      color: var(--accent);
+      cursor: pointer;
+      font-size: 1.2rem;
+      padding: 4px;
+      border-radius: 4px;
+      transition: transform 0.2s;
+    }
+
+    .lyrics-toggle-btn:hover {
+      transform: scale(1.2);
+    }
+
+    /* Текст песни */
+    .lyrics-container {
+      background: var(--panel);
+      padding: 24px;
+      border-radius: 12px;
+      margin: 30px 0;
+      box-shadow: 0 4px 12px var(--shadow);
+      min-height: 200px;
+    }
+
+    .lyrics-line {
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      transition: color 0.2s, transform 0.2s;
+    }
+
+    .lyrics-line.active {
+      color: var(--accent);
+      font-weight: 600;
+      transform: scale(1.02);
+    }
+
+    /* Плеер */
+    .player {
+      background: var(--panel);
+      padding: 24px;
+      border-radius: 16px;
+      margin: 40px 0;
+      box-shadow: 0 4px 16px var(--shadow);
+    }
+
+    .player-title {
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: 600;
+      font-size: 1.2rem;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+      opacity: 0.95;
+    }
+
+    .btn.toggle {
+      width: auto;
+      padding: 0 12px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+    }
+
+    .btn.active {
+      background: #d4af37;
+    }
+
+    .seek-container, .volume-container {
+      flex: 1;
+      min-width: 200px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    input[type="range"] {
+      flex: 1;
+      height: 6px;
+      border-radius: 3px;
+      background: #ddd;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+    }
+
+    .time {
+      font-size: 0.9rem;
+      min-width: 90px;
+      text-align: center;
+    }
+
+    /* Стихи */
+    .poem-item {
+      background: var(--panel);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px var(--shadow);
+      cursor: pointer;
+    }
+
+    .poem-title {
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+      color: var(--accent);
+    }
+
+    .poem-date {
+      font-size: 0.9rem;
+      opacity: 0.8;
+      margin-bottom: 12px;
+    }
+
+    .poem-text {
+      line-height: 1.8;
+      white-space: pre-line;
+      display: none;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      animation: fadeIn 0.5s ease;
+    }
+
+    .poem-item.active .poem-text {
+      display: block;
+    }
+
+    /* Переключатель темы */
+    .theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--panel);
+      border: 2px solid var(--accent);
+      color: var(--accent);
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      box-shadow: 0 4px 12px var(--shadow);
+      z-index: 100;
+    }
+
+    /* Адаптив */
+    @media (max-width: 768px) {
+      .header {
+        padding: 30px 0;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      .cover {
+        max-width: 260px;
+      }
+
+      .seek-container, .volume-container {
+        min-width: 100%;
+      }
+
+      .tracks-table th, .tracks-table td {
+        padding: 12px 10px;
+        font-size: 0.95rem;
+      }
+
+      .tracks-table th:nth-child(2) {
+        width: 60%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 12px;
+      }
+
+      .tabs {
+        gap: 10px;
+      }
+
+      .tab {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+      }
+
+      .btn {
+        width: 40px;
+        height: 40px;
+      }
+
+      .tracks-table th, .tracks-table td {
+        padding: 10px 8px;
+        font-size: 0.9rem;
+      }
+
+      .tracks-table th:nth-child(1),
+      .tracks-table th:nth-child(3),
+      .tracks-table th:nth-child(4) {
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" id="themeToggle">🌙</button>
+
+  <div class="container">
+    <!-- Шапка -->
+    <header class="header">
+      <img src="images/albom_photo.png" alt="Обложка альбома" class="cover" id="albumCover">
+      <h1>Альбом для Елизаветы</h1>
+      <p class="dedication">Лиза, этот альбом — собрание песен, которые я написал для тебя. Здесь же — все стихи, что я тебе посвятил. Слушай. Читай. Я рядом.</p>
+      <button class="start-btn" id="startBtn">▶️ Начать слушать</button>
+    </header>
+
+    <!-- Вкладки -->
+    <div class="tabs">
+      <button class="tab active" data-tab="tracks">🎵 Песни</button>
+      <button class="tab" data-tab="poems">📜 Стихи</button>
+    </div>
+
+    <!-- Секция: Песни -->
+    <section id="tracksSection" class="section active">
+      <div class="tracks-table-container">
+        <table class="tracks-table">
+          <thead>
+            <tr>
+              <th>№</th>
+              <th>Название</th>
+              <th>Длительность</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="trackList">
+            <!-- Список треков будет сгенерирован JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="lyrics-container" id="lyricsContainer" style="display: none;">
+        <!-- Текст песни будет здесь, но скрыт по умолчанию -->
+      </div>
+
+      <div class="player">
+        <div class="player-title">Плеер</div>
+        <div class="controls">
+          <button class="btn" id="playBtn">▶️</button>
+          <button class="btn" id="prevBtn">⏮️</button>
+          <button class="btn" id="nextBtn">⏭️</button>
+          <button class="btn toggle" id="lyricsToggle">📖 Текст</button>
+          <div class="seek-container">
+            <span class="time" id="currentTime">0:00</span>
+            <input type="range" id="seekBar" value="0" min="0" max="100" step="0.1">
+            <span class="time" id="duration">0:00</span>
+          </div>
+          <div class="volume-container">
+            <span>🔊</span>
+            <input type="range" id="volumeBar" value="100" min="0" max="100">
+          </div>
+          <button class="btn toggle" id="loopBtn">🔁</button>
+          <button class="btn toggle" id="shuffleBtn">🔀</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Секция: Стихи -->
+    <section id="poemsSection" class="section">
+      <div id="poemsContainer">
+        <!-- Стихи будут сгенерированы JS -->
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // ==================================================
+    // ДАННЫЕ — МОЖНО РЕДАКТИРОВАТЬ
+    // ==================================================
+
+    const tracks = [
+      {
+        title: "История нашей любви",
+        src: "audio/История нашей любви 1.mp3", // ← твой путь
+        duration: "3:00",
+        lyrics: [
+          { time: 5,    text: "Год за годом шёл, и мы учились друг у друга," },
+          { time: 10,   text: "Кто я, и кто ты — незнание было только мукой." },
+          { time: 15,   text: "Чувства через край, чувства — это рай!" },
+
+          { time: 22,   text: "Мы пишем нашу историю, и траектория" },
+          { time: 28,   text: "Нас в семью свою ведёт." },
+          { time: 32,   text: "Любовь сердца переполнила, жизнь нам устроила." },
+          { time: 39,   text: "Пусть она нас и несёт!" },
+          { time: 42,   text: "История нашей любви," },
+          { time: 48,   text: "Вечной любви!" },
+
+          { time: 54,   text: "Наша жизнь идёт, быть обещает интересной," },
+          { time: 59,   text: "Из знакомых вдруг мы стали женихом, невестой." },
+          { time: 64,   text: "Вместе навсегда! Мы вместе после «да»!" },
+          { time: 71,   text: "Мы пишем нашу историю, и траектория" },
+          { time: 77,   text: "Нас в семью свою ведёт." },
+          { time: 82,   text: "Любовь сердца переполнила, жизнь нам устроила." },
+          { time: 88,   text: "Пусть она нас и несёт!" },
+          { time: 92,   text: "История нашей любви," },
+          { time: 97,   text: "Вечной любви!" },
+          { time: 102,  text: "История нашей любви," },
+          { time: 107,  text: "Вечной любви!" },
+          { time: 113,  text: "История нашей любви и дружбы," },
+          { time: 118,  text: "История нашей судьбы намного глубже." },
+          { time: 124,  text: "Давай проживём" },
+          { time: 129,  text: "Всю жизнь лишь вдвоём!" },
+
+          { time: 134,  text: "Мы пишем нашу историю, и траектория" },
+          { time: 140,  text: "Нас в семью свою ведёт." },
+          { time: 144,  text: "Любовь сердца переполнила, жизнь нам устроила." },
+          { time: 150,  text: "Пусть она нас и несёт!" },
+          { time: 154,  text: "История нашей любви," },
+          { time: 159,  text: "Вечной любви!" },
+          { time: 164,  text: "История нашей любви," },
+          { time: 169,  text: "Вечной любви!" },
+          { time: 174,  text: "История нашей любви," },
+          { time: 180,  text: "Вечной любви!" }
+        ]
+      }
+      // Добавляй сюда другие треки по такому же шаблону
+    ];
+
+    const poems = [
+      {
+        title: "Ты — мой рассвет",
+        date: "12 мая 2024",
+        text: `Ты — мой рассвет в глухую ночь,
+Мой тихий свет, моя печаль и мощь.
+Ты — вдох, что я давно не мог вдохнуть,
+Ты — смысл, что научил мой мир вернуть.`
+      },
+      {
+        title: "Без тебя",
+        date: "3 июня 2024",
+        text: `Без тебя — как без воздуха,
+Как без звёзд на небе.
+Как без песни в музыке,
+Как без хлеба за столом.
+Ты — моя необходимость.
+Ты — моя точка опоры.
+Ты — моя тишина,
+Когда весь мир кричит.`
+      }
+      // Добавляй сюда свои стихи
+    ];
+
+    // ==================================================
+    // ЛОГИКА — НИЖЕ МЕНЯТЬ НЕ НУЖНО
+    // ==================================================
+
+    // DOM
+    const themeToggle = document.getElementById('themeToggle');
+    const startBtn = document.getElementById('startBtn');
+    const tabs = document.querySelectorAll('.tab');
+    const sections = document.querySelectorAll('.section');
+    const trackListEl = document.getElementById('trackList');
+    const lyricsContainer = document.getElementById('lyricsContainer');
+    const poemsContainer = document.getElementById('poemsContainer');
+
+    // Плеер
+    const audio = new Audio();
+    const playBtn = document.getElementById('playBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const seekBar = document.getElementById('seekBar');
+    const currentTimeEl = document.getElementById('currentTime');
+    const durationEl = document.getElementById('duration');
+    const volumeBar = document.getElementById('volumeBar');
+    const loopBtn = document.getElementById('loopBtn');
+    const shuffleBtn = document.getElementById('shuffleBtn');
+    const lyricsToggleBtn = document.getElementById('lyricsToggle');
+
+    // Состояние
+    let currentTrackIndex = 0;
+    let isPlaying = false;
+    let isLoop = false;
+    let isShuffle = false;
+    let isLyricsVisible = false;
+    let shuffledIndices = [];
+
+    // Инициализация
+    function init() {
+      renderTrackList();
+      renderPoems();
+      setupEventListeners();
+      loadTheme();
+      loadProgress();
+    }
+
+    // Рендер списка треков
+    function renderTrackList() {
+      trackListEl.innerHTML = '';
+      tracks.forEach((track, index) => {
+        const tr = document.createElement('tr');
+        tr.className = index === currentTrackIndex ? 'active' : '';
+        tr.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${track.title}</td>
+          <td>${track.duration}</td>
+          <td><button class="lyrics-toggle-btn" data-index="${index}">📖</button></td>
+        `;
+        tr.addEventListener('click', (e) => {
+          if (!e.target.classList.contains('lyrics-toggle-btn')) {
+            playTrack(index);
+          }
+        });
+        tr.querySelector('.lyrics-toggle-btn').addEventListener('click', (e) => {
+          e.stopPropagation();
+          playTrack(index);
+          toggleLyrics();
+        });
+        trackListEl.appendChild(tr);
+      });
+    }
+
+    // Рендер стихов
+    function renderPoems() {
+      poemsContainer.innerHTML = '';
+      poems.forEach(poem => {
+        const div = document.createElement('div');
+        div.className = 'poem-item';
+        div.innerHTML = `
+          <div class="poem-title">${poem.title}</div>
+          <div class="poem-date">${poem.date}</div>
+          <div class="poem-text">${poem.text}</div>
+        `;
+        div.addEventListener('click', function() {
+          this.classList.toggle('active');
+        });
+        poemsContainer.appendChild(div);
+      });
+    }
+
+    // Настройка событий
+    function setupEventListeners() {
+      // Вкладки
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          tabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          const tabId = tab.dataset.tab;
+          sections.forEach(section => section.classList.remove('active'));
+          document.getElementById(`${tabId}Section`).classList.add('active');
+        });
+      });
+
+      // Плеер
+      startBtn.addEventListener('click', () => {
+        playTrack(0);
+        document.querySelector('.player').scrollIntoView({ behavior: 'smooth' });
+      });
+
+      playBtn.addEventListener('click', togglePlay);
+      prevBtn.addEventListener('click', playPrev);
+      nextBtn.addEventListener('click', playNext);
+      loopBtn.addEventListener('click', toggleLoop);
+      shuffleBtn.addEventListener('click', toggleShuffle);
+      lyricsToggleBtn.addEventListener('click', toggleLyrics);
+
+      seekBar.addEventListener('input', () => {
+        const seekTime = (seekBar.value / 100) * audio.duration;
+        audio.currentTime = seekTime;
+      });
+
+      volumeBar.addEventListener('input', () => {
+        audio.volume = volumeBar.value / 100;
+        localStorage.setItem('volume', audio.volume);
+      });
+
+      audio.addEventListener('timeupdate', updateProgress);
+      audio.addEventListener('ended', () => {
+        if (isLoop) {
+          audio.currentTime = 0;
+          audio.play();
+        } else {
+          playNext();
+        }
+      });
+
+      // Тема
+      themeToggle.addEventListener('click', toggleTheme);
+    }
+
+    // Воспроизведение
+    function playTrack(index) {
+      if (isShuffle && shuffledIndices.length > 0) {
+        currentTrackIndex = (shuffledIndices.indexOf(index) === -1 ? 0 : shuffledIndices.indexOf(index));
+      } else {
+        currentTrackIndex = index;
+      }
+
+      const track = tracks[currentTrackIndex];
+      audio.src = track.src;
+      audio.play();
+      isPlaying = true;
+      playBtn.textContent = '⏸️';
+
+      // Обновить активный трек
+      document.querySelectorAll('.tracks-table tbody tr').forEach((row, i) => {
+        row.classList.toggle('active', i === currentTrackIndex);
+      });
+
+      // Обновить текст, только если он виден
+      if (isLyricsVisible) {
+        updateLyrics();
+      }
+
+      // Обновить длительность
+      audio.addEventListener('loadedmetadata', () => {
+        durationEl.textContent = formatTime(audio.duration);
+      }, { once: true });
+    }
+
+    function togglePlay() {
+      if (isPlaying) {
+        audio.pause();
+        playBtn.textContent = '▶️';
+      } else {
+        audio.play();
+        playBtn.textContent = '⏸️';
+      }
+      isPlaying = !isPlaying;
+    }
+
+    function playPrev() {
+      if (isShuffle && shuffledIndices.length > 0) {
+        currentTrackIndex = (currentTrackIndex - 1 + shuffledIndices.length) % shuffledIndices.length;
+        playTrack(shuffledIndices[currentTrackIndex]);
+      } else {
+        currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+        playTrack(currentTrackIndex);
+      }
+    }
+
+    function playNext() {
+      if (isShuffle && shuffledIndices.length > 0) {
+        currentTrackIndex = (currentTrackIndex + 1) % shuffledIndices.length;
+        playTrack(shuffledIndices[currentTrackIndex]);
+      } else {
+        currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+        playTrack(currentTrackIndex);
+      }
+    }
+
+    function toggleLoop() {
+      isLoop = !isLoop;
+      loopBtn.classList.toggle('active', isLoop);
+      audio.loop = isLoop;
+    }
+
+    function toggleShuffle() {
+      isShuffle = !isShuffle;
+      shuffleBtn.classList.toggle('active', isShuffle);
+      if (isShuffle) {
+        shuffledIndices = [...Array(tracks.length).keys()].sort(() => Math.random() - 0.5);
+      } else {
+        shuffledIndices = [];
+      }
+    }
+
+    function toggleLyrics() {
+      isLyricsVisible = !isLyricsVisible;
+      lyricsContainer.style.display = isLyricsVisible ? 'block' : 'none';
+      lyricsToggleBtn.textContent = isLyricsVisible ? '📖 Скрыть текст' : '📖 Текст';
+      if (isLyricsVisible) {
+        updateLyrics();
+      }
+    }
+
+    // Обновление прогресса и текста
+    function updateProgress() {
+      const percent = (audio.currentTime / audio.duration) * 100 || 0;
+      seekBar.value = percent;
+      currentTimeEl.textContent = formatTime(audio.currentTime);
+
+      if (isLyricsVisible) {
+        const currentLyrics = tracks[currentTrackIndex]?.lyrics || [];
+        const currentLineIndex = currentLyrics.findIndex((line, i) => {
+          return i === currentLyrics.length - 1 || audio.currentTime < currentLyrics[i + 1].time;
+        });
+
+        document.querySelectorAll('.lyrics-line').forEach((line, i) => {
+          line.classList.toggle('active', i === currentLineIndex);
+          if (i === currentLineIndex) {
+            line.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        });
+      }
+    }
+
+    function updateLyrics() {
+      const lyrics = tracks[currentTrackIndex]?.lyrics || [];
+      lyricsContainer.innerHTML = '';
+      lyrics.forEach(line => {
+        const div = document.createElement('div');
+        div.className = 'lyrics-line';
+        div.textContent = line.text;
+        div.dataset.time = line.time;
+        div.addEventListener('click', () => {
+          audio.currentTime = line.time;
+        });
+        lyricsContainer.appendChild(div);
+      });
+    }
+
+    // Утилиты
+    function formatTime(seconds) {
+      const min = Math.floor(seconds / 60);
+      const sec = Math.floor(seconds % 60).toString().padStart(2, '0');
+      return `${min}:${sec}`;
+    }
+
+    function toggleTheme() {
+      const isDark = document.body.getAttribute('data-theme') === 'dark';
+      document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      themeToggle.textContent = isDark ? '☀️' : '🌙';
+      localStorage.setItem('theme', isDark ? 'light' : 'dark');
+    }
+
+    function loadTheme() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.body.setAttribute('data-theme', savedTheme);
+      themeToggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+    }
+
+    function loadProgress() {
+      const savedVolume = localStorage.getItem('volume');
+      if (savedVolume) {
+        audio.volume = parseFloat(savedVolume);
+        volumeBar.value = audio.volume * 100;
+      }
+    }
+
+    // Запуск
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
